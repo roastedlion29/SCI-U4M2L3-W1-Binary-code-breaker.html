@@ -1,0 +1,513 @@
+[SCI U4M2L3 W1 Binary code breaker.html](https://github.com/user-attachments/files/26202699/SCI.U4M2L3.W1.Binary.code.breaker.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Code Breaker — Secret Agent HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#22c55e; --green-dark:#15803d; --green-light:#bbf7d0;
+    --amber:#f59e0b; --amber-light:#fef3c7;
+    --red:#ef4444; --blue:#3b82f6; --blue-light:#dbeafe;
+    --purple:#a855f7;
+    --bg:#0f172a; --surface:#1e293b; --surface2:#273449;
+    --border:#334155; --text:#f1f5f9; --muted:#94a3b8;
+    --card-radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* HEADER */
+  .header{background:var(--surface);border-bottom:2px solid var(--green);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .logo{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--green);letter-spacing:2px;}
+  .logo span{color:var(--text);}
+  .badge-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .badge{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 14px;font-family:'Orbitron',monospace;font-size:11px;color:var(--muted);}
+  .badge b{color:var(--green);font-size:15px;}
+
+  /* INTRO */
+  #intro{max-width:720px;margin:40px auto;padding:0 20px;text-align:center;}
+  .intro-icon{font-size:68px;margin-bottom:14px;display:block;line-height:1;}
+  .intro-title{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--green);margin-bottom:10px;}
+  .intro-sub{font-size:16px;color:var(--muted);line-height:1.75;margin-bottom:26px;}
+  .intro-sub b{color:var(--text);}
+  .btn-start{background:var(--green);color:#052e16;font-family:'Orbitron',monospace;font-size:14px;font-weight:700;border:none;border-radius:10px;padding:15px 40px;cursor:pointer;letter-spacing:2px;transition:background .15s,transform .1s;}
+  .btn-start:hover{background:#16a34a;}
+  .btn-start:active{transform:scale(.97);}
+
+  /* REF CARD */
+  .ref-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--card-radius);padding:18px;margin:28px auto 0;max-width:720px;}
+  .ref-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--amber);letter-spacing:2px;margin-bottom:14px;text-align:center;}
+  .ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:5px;}
+  .ref-item{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+  .ref-letter{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--amber);min-width:16px;}
+  .ref-binary{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.5px;}
+
+  /* GAME */
+  #game{display:none;max-width:860px;margin:0 auto;padding:22px 20px 60px;}
+  .mission-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+  .mission-label{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);}
+  .mission-title{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--green);margin-top:2px;}
+  .progress-bar-wrap{background:var(--surface2);border-radius:99px;height:8px;width:200px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:var(--green);border-radius:99px;transition:width .4s;}
+
+  /* VISUAL CLUE BOX */
+  .visual-box{background:var(--surface);border:1px dashed var(--purple);border-radius:var(--card-radius);padding:16px;margin-bottom:16px;display:none;}
+  .visual-label{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--purple);margin-bottom:12px;}
+  .visual-content{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+  .visual-hint{font-size:14px;color:var(--muted);font-style:italic;text-align:center;margin-top:10px;}
+
+  /* CODE BOX */
+  .code-box{background:var(--surface);border:1px solid var(--green);border-radius:var(--card-radius);padding:20px;margin-bottom:18px;}
+  .code-label{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--green);margin-bottom:12px;}
+  .code-segments{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;}
+  .code-word{display:flex;flex-wrap:wrap;gap:5px;background:var(--surface2);border-radius:8px;padding:7px 10px;border:1px solid var(--border);}
+  .code-byte{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--green);background:rgba(34,197,94,.08);border-radius:4px;padding:4px 6px;letter-spacing:1px;transition:background .2s;}
+  .code-byte.highlight{background:rgba(245,158,11,.2);color:var(--amber);}
+
+  .hint-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;padding:6px 14px;cursor:pointer;transition:border-color .15s,color .15s;}
+  .hint-btn:hover{border-color:var(--amber);color:var(--amber);}
+  .hint-box{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--amber);margin-top:10px;display:none;font-family:'Share Tech Mono',monospace;letter-spacing:1px;line-height:2;}
+
+  .answer-area{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .answer-input{flex:1;min-width:200px;background:var(--surface);border:2px solid var(--border);border-radius:10px;color:var(--text);font-family:'Share Tech Mono',monospace;font-size:18px;padding:11px 14px;letter-spacing:3px;outline:none;text-transform:uppercase;transition:border-color .15s;}
+  .answer-input:focus{border-color:var(--green);}
+  .answer-input.correct{border-color:var(--green);background:rgba(34,197,94,.07);}
+  .answer-input.wrong{border-color:var(--red);background:rgba(239,68,68,.07);}
+
+  .btn-check{background:var(--green);color:#052e16;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;border:none;border-radius:10px;padding:11px 26px;cursor:pointer;letter-spacing:1px;transition:background .15s,transform .1s;white-space:nowrap;}
+  .btn-check:hover{background:#16a34a;}
+  .btn-check:active{transform:scale(.97);}
+  .btn-check:disabled{background:var(--surface2);color:var(--muted);cursor:default;}
+
+  .feedback-msg{font-size:14px;font-weight:700;margin-top:10px;min-height:20px;display:flex;align-items:center;gap:8px;}
+  .feedback-msg.ok{color:var(--green);}
+  .feedback-msg.fail{color:var(--red);}
+
+  .btn-next{display:none;margin-top:14px;background:var(--surface2);border:1px solid var(--green);color:var(--green);font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;border-radius:8px;padding:10px 22px;cursor:pointer;transition:background .15s;}
+  .btn-next:hover{background:rgba(34,197,94,.1);}
+
+  .ref-toggle{margin-top:26px;border-top:1px solid var(--border);padding-top:16px;}
+  .ref-toggle-btn{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;padding:8px 16px;cursor:pointer;transition:border-color .15s,color .15s;width:100%;text-align:left;}
+  .ref-toggle-btn:hover{border-color:var(--blue);color:var(--blue);}
+  .ref-panel{display:none;margin-top:12px;}
+
+  /* END SCREEN */
+  #endscreen{display:none;max-width:580px;margin:50px auto;text-align:center;padding:0 20px;}
+  .end-icon{font-size:76px;display:block;margin-bottom:14px;}
+  .end-title{font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--green);margin-bottom:8px;}
+  .end-score{font-size:58px;font-family:'Orbitron',monospace;font-weight:700;color:var(--amber);margin:10px 0;}
+  .end-rank{font-size:17px;font-weight:700;color:var(--text);margin-bottom:22px;}
+  .stars{font-size:34px;letter-spacing:5px;margin-bottom:22px;display:block;}
+  .end-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;}
+  .end-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .end-stat-val{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--green);}
+  .end-stat-label{font-size:11px;color:var(--muted);margin-top:3px;}
+  .btn-restart{background:var(--green);color:#052e16;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;border:none;border-radius:10px;padding:13px 34px;cursor:pointer;letter-spacing:2px;transition:background .15s;}
+  .btn-restart:hover{background:#16a34a;}
+
+  .scan-line{position:fixed;inset:0;pointer-events:none;z-index:999;background:repeating-linear-gradient(to bottom,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);opacity:.35;}
+
+  @media(max-width:480px){
+    .logo{font-size:13px;} .intro-title{font-size:20px;}
+    .code-byte{font-size:10px;} .answer-input{font-size:15px;}
+    .end-score{font-size:44px;}
+  }
+</style>
+</head>
+<body>
+<div class="scan-line"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">BINARY<span> CODE BREAKER</span></div>
+  <div class="badge-row">
+    <div class="badge">SCORE <b id="hdr-score">0</b></div>
+    <div class="badge">MISSION <b id="hdr-mission">0</b>/8</div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div id="intro">
+  <span class="intro-icon">🕵️</span>
+  <div class="intro-title">SECRET AGENT HQ</div>
+  <p class="intro-sub">
+    Welcome, Agent! Enemies are sending secret messages using <b>binary code</b> —<br>
+    a system that uses only <b>1s and 0s</b> to represent every letter.<br><br>
+    Decode <b>8 encrypted transmissions</b>. Missions 7 &amp; 8 include a <b>visual clue</b> — 
+    can you crack them all and earn the rank of <b>Master Code Breaker?</b>
+  </p>
+  <button class="btn-start" onclick="startGame()">ACCEPT MISSION</button>
+  <div class="ref-card">
+    <div class="ref-title">📡 BINARY ALPHABET CHART — USE THIS TO DECODE!</div>
+    <div class="ref-grid" id="intro-ref"></div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="mission-header">
+    <div>
+      <div class="mission-label">INCOMING TRANSMISSION</div>
+      <div class="mission-title" id="mission-title">MISSION 1</div>
+    </div>
+    <div style="text-align:right;">
+      <div class="mission-label" style="margin-bottom:5px;">PROGRESS</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual clue (missions 7 & 8) -->
+  <div class="visual-box" id="visual-box">
+    <div class="visual-label">🖼 VISUAL CLUE — WHAT DO YOU SEE?</div>
+    <div class="visual-content" id="visual-content"></div>
+    <div class="visual-hint" id="visual-hint"></div>
+  </div>
+
+  <!-- Binary code display -->
+  <div class="code-box">
+    <div class="code-label">⬛ ENCRYPTED MESSAGE</div>
+    <div class="code-segments" id="code-display"></div>
+  </div>
+
+  <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+    <span style="font-size:13px;color:var(--muted);">Stuck?</span>
+    <button class="hint-btn" id="hint-btn" onclick="showHint()">💡 Reveal First Letter (-10 pts)</button>
+  </div>
+  <div class="hint-box" id="hint-box"></div>
+
+  <div class="answer-area">
+    <input type="text" class="answer-input" id="answer-input"
+      placeholder="TYPE YOUR ANSWER..."
+      oninput="this.value=this.value.toUpperCase()"
+      onkeydown="if(event.key==='Enter')checkAnswer()"/>
+    <button class="btn-check" id="check-btn" onclick="checkAnswer()">DECODE</button>
+  </div>
+  <div class="feedback-msg" id="feedback"></div>
+  <button class="btn-next" id="next-btn" onclick="nextMission()">NEXT MISSION →</button>
+
+  <div class="ref-toggle">
+    <button class="ref-toggle-btn" onclick="toggleRef()">📡 Show / Hide Binary Alphabet Chart</button>
+    <div class="ref-panel" id="ref-panel">
+      <div class="ref-grid" id="game-ref"></div>
+    </div>
+  </div>
+</div>
+
+<!-- END SCREEN -->
+<div id="endscreen">
+  <span class="end-icon">🏆</span>
+  <div class="end-title">ALL MISSIONS COMPLETE!</div>
+  <div class="end-score" id="end-score">0</div>
+  <span class="stars" id="end-stars">⭐⭐⭐</span>
+  <div class="end-rank" id="end-rank">Master Code Breaker</div>
+  <div class="end-stats">
+    <div class="end-stat"><div class="end-stat-val" id="stat-correct">0</div><div class="end-stat-label">Decoded</div></div>
+    <div class="end-stat"><div class="end-stat-val" id="stat-hints">0</div><div class="end-stat-label">Hints Used</div></div>
+    <div class="end-stat"><div class="end-stat-val" id="stat-max">760</div><div class="end-stat-label">Max Score</div></div>
+  </div>
+  <button class="btn-restart" onclick="restartGame()">TRY AGAIN</button>
+</div>
+
+<!-- SVG ILLUSTRATIONS -->
+<svg id="svg-satellite" style="display:none" viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg"></svg>
+<svg id="svg-transmit" style="display:none" viewBox="0 0 260 180" xmlns="http://www.w3.org/2000/svg"></svg>
+
+<script>
+/* ── BINARY ALPHABET ── */
+const ALPHA={}, ALPHA_REV={};
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((c,i)=>{
+  const b=(i+65).toString(2).padStart(8,"0");
+  ALPHA[c]=b; ALPHA_REV[b]=c;
+});
+
+/* ── INLINE SVG ILLUSTRATIONS ── */
+const SVG_SATELLITE = `
+<svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" width="240" height="170">
+  <rect width="280" height="200" rx="10" fill="#1e293b"/>
+  <!-- stars -->
+  <circle cx="20" cy="15" r="1.5" fill="#94a3b8"/>
+  <circle cx="55" cy="30" r="1" fill="#94a3b8"/>
+  <circle cx="90" cy="10" r="1.5" fill="#94a3b8"/>
+  <circle cx="140" cy="25" r="1" fill="#94a3b8"/>
+  <circle cx="200" cy="12" r="1.5" fill="#94a3b8"/>
+  <circle cx="245" cy="35" r="1" fill="#94a3b8"/>
+  <circle cx="260" cy="8" r="1" fill="#94a3b8"/>
+  <circle cx="30" cy="55" r="1" fill="#94a3b8"/>
+  <circle cx="250" cy="65" r="1.5" fill="#94a3b8"/>
+  <!-- satellite body -->
+  <rect x="110" y="75" width="60" height="36" rx="5" fill="#475569"/>
+  <rect x="114" y="79" width="52" height="28" rx="3" fill="#334155"/>
+  <!-- solar panels left -->
+  <rect x="42" y="82" width="62" height="22" rx="4" fill="#1d4ed8"/>
+  <line x1="73" y1="82" x2="73" y2="104" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="57" y1="82" x2="57" y2="104" stroke="#3b82f6" stroke-width="1"/>
+  <line x1="89" y1="82" x2="89" y2="104" stroke="#3b82f6" stroke-width="1"/>
+  <!-- solar panel connector left -->
+  <rect x="104" y="90" width="6" height="6" rx="1" fill="#64748b"/>
+  <!-- solar panels right -->
+  <rect x="176" y="82" width="62" height="22" rx="4" fill="#1d4ed8"/>
+  <line x1="207" y1="82" x2="207" y2="104" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="191" y1="82" x2="191" y2="104" stroke="#3b82f6" stroke-width="1"/>
+  <line x1="223" y1="82" x2="223" y2="104" stroke="#3b82f6" stroke-width="1"/>
+  <!-- solar panel connector right -->
+  <rect x="170" y="90" width="6" height="6" rx="1" fill="#64748b"/>
+  <!-- dish antenna -->
+  <ellipse cx="140" cy="70" rx="20" ry="8" fill="none" stroke="#a855f7" stroke-width="2"/>
+  <ellipse cx="140" cy="70" rx="13" ry="5" fill="none" stroke="#a855f7" stroke-width="1.5"/>
+  <line x1="140" y1="75" x2="140" y2="80" stroke="#94a3b8" stroke-width="2"/>
+  <!-- signal waves from dish -->
+  <path d="M155 55 Q165 50 175 55" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.9"/>
+  <path d="M158 46 Q170 39 182 46" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.6"/>
+  <path d="M161 37 Q175 28 189 37" fill="none" stroke="#22c55e" stroke-width="1" opacity="0.35"/>
+  <!-- earth curve at bottom -->
+  <ellipse cx="140" cy="210" rx="130" ry="55" fill="#0f4c75" opacity="0.6"/>
+  <ellipse cx="140" cy="210" rx="130" ry="55" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.5"/>
+  <!-- signal to earth -->
+  <line x1="140" y1="111" x2="110" y2="162" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.8"/>
+  <!-- label -->
+  <text x="140" y="152" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="11" fill="#a855f7" letter-spacing="2">SATELLITE</text>
+</svg>`;
+
+const SVG_TRANSMIT = `
+<svg viewBox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" width="240" height="170">
+  <rect width="280" height="200" rx="10" fill="#1e293b"/>
+  <!-- tower base -->
+  <polygon points="120,165 160,165 148,60 132,60" fill="#475569"/>
+  <polygon points="128,110 152,110 148,60 132,60" fill="#64748b"/>
+  <!-- tower cross braces -->
+  <line x1="125" y1="90" x2="155" y2="90" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="122" y1="115" x2="158" y2="115" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="120" y1="140" x2="160" y2="140" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="125" y1="90" x2="158" y2="115" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="155" y1="90" x2="122" y2="115" stroke="#94a3b8" stroke-width="1"/>
+  <!-- antenna tip -->
+  <line x1="140" y1="60" x2="140" y2="38" stroke="#94a3b8" stroke-width="3"/>
+  <circle cx="140" cy="36" r="4" fill="#ef4444"/>
+  <!-- signal arcs LEFT -->
+  <path d="M118 75 Q98 63 88 75" fill="none" stroke="#22c55e" stroke-width="2.5" opacity="1"/>
+  <path d="M116 62 Q88 45 74 62" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.7"/>
+  <path d="M114 49 Q78 27 60 49" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.4"/>
+  <!-- signal arcs RIGHT -->
+  <path d="M162 75 Q182 63 192 75" fill="none" stroke="#22c55e" stroke-width="2.5" opacity="1"/>
+  <path d="M164 62 Q192 45 206 62" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.7"/>
+  <path d="M166 49 Q202 27 220 49" fill="none" stroke="#22c55e" stroke-width="1.5" opacity="0.4"/>
+  <!-- ground -->
+  <rect x="90" y="163" width="100" height="8" rx="4" fill="#334155"/>
+  <!-- binary floating bits -->
+  <text x="30" y="100" font-family="'Share Tech Mono',monospace" font-size="10" fill="#22c55e" opacity="0.5">01</text>
+  <text x="18" y="120" font-family="'Share Tech Mono',monospace" font-size="10" fill="#22c55e" opacity="0.3">10</text>
+  <text x="220" y="100" font-family="'Share Tech Mono',monospace" font-size="10" fill="#22c55e" opacity="0.5">01</text>
+  <text x="232" y="120" font-family="'Share Tech Mono',monospace" font-size="10" fill="#22c55e" opacity="0.3">11</text>
+  <!-- label -->
+  <text x="140" y="185" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="11" fill="#22c55e" letter-spacing="2">TRANSMIT</text>
+</svg>`;
+
+/* ── MISSIONS ── */
+const MISSIONS = [
+  { answer:"WAVES",   story:"Mission 1 — Warm up, Agent!", points:70, visual:false },
+  { answer:"SOUND",   story:"Mission 2 — Stay focused!", points:80, visual:false },
+  { answer:"CODE",    story:"Mission 3 — Nice and short!", points:65, visual:false },
+  { answer:"SIGNAL",  story:"Mission 4 — Getting trickier!", points:90, visual:false },
+  { answer:"BINARY",  story:"Mission 5 — Can you decode your own language?", points:100, visual:false },
+  { answer:"PIXEL",   story:"Mission 6 — Think small!", points:95, visual:false },
+  {
+    answer:"TRANSMIT",
+    story:"Mission 7 — Visual Clue Unlocked! Study the picture.",
+    points:120, visual:true,
+    svgHTML: SVG_TRANSMIT,
+    visualHint:"What is this tower doing? What word describes sending a signal outward?"
+  },
+  {
+    answer:"SATELLITE",
+    story:"Mission 8 — Final Transmission! Use every clue you have.",
+    points:140, visual:true,
+    svgHTML: SVG_SATELLITE,
+    visualHint:"What is this object orbiting Earth called? It receives and re-sends signals from space!"
+  },
+];
+
+let current=0, score=0, hintsUsed=0, correctCount=0;
+let hintUsedThisRound=false, solved=false;
+
+/* ── ALPHA CHART ── */
+function buildRefGrid(id){
+  const g=document.getElementById(id);
+  if(!g)return;
+  g.innerHTML="";
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(c=>{
+    const el=document.createElement("div");
+    el.className="ref-item";
+    el.innerHTML=`<span class="ref-letter">${c}</span><span class="ref-binary">${ALPHA[c]}</span>`;
+    g.appendChild(el);
+  });
+}
+
+/* ── RENDER BINARY ── */
+function renderBinaryMessage(text){
+  const words=text.toUpperCase().split(" ");
+  const container=document.getElementById("code-display");
+  container.innerHTML="";
+  words.forEach(word=>{
+    const wd=document.createElement("div");
+    wd.className="code-word";
+    word.split("").forEach(c=>{
+      const b=ALPHA[c];
+      if(!b)return;
+      const sp=document.createElement("span");
+      sp.className="code-byte";
+      sp.textContent=b;
+      wd.appendChild(sp);
+    });
+    container.appendChild(wd);
+  });
+}
+
+/* ── START ── */
+function startGame(){
+  buildRefGrid("game-ref");
+  document.getElementById("intro").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadMission(0);
+}
+
+/* ── LOAD MISSION ── */
+function loadMission(idx){
+  solved=false; hintUsedThisRound=false; current=idx;
+  const m=MISSIONS[idx];
+  document.getElementById("mission-title").textContent=`MISSION ${idx+1} — ${m.story}`;
+  document.getElementById("hdr-mission").textContent=idx+1;
+  document.getElementById("progress-fill").style.width=`${(idx/MISSIONS.length)*100}%`;
+
+  /* visual clue */
+  const vBox=document.getElementById("visual-box");
+  const vContent=document.getElementById("visual-content");
+  const vHint=document.getElementById("visual-hint");
+  if(m.visual){
+    vBox.style.display="block";
+    vContent.innerHTML=m.svgHTML;
+    vHint.textContent=m.visualHint||"";
+  } else {
+    vBox.style.display="none";
+    vContent.innerHTML="";
+    vHint.textContent="";
+  }
+
+  renderBinaryMessage(m.answer);
+  const inp=document.getElementById("answer-input");
+  inp.value=""; inp.className="answer-input"; inp.disabled=false;
+  inp.placeholder=m.answer.includes(" ")?"INCLUDE SPACES IN ANSWER":"TYPE YOUR ANSWER...";
+  document.getElementById("feedback").textContent="";
+  document.getElementById("feedback").className="feedback-msg";
+  document.getElementById("next-btn").style.display="none";
+  document.getElementById("check-btn").disabled=false;
+  const hb=document.getElementById("hint-btn");
+  hb.disabled=false; hb.textContent="💡 Reveal First Letter (-10 pts)";
+  document.getElementById("hint-box").style.display="none";
+  document.getElementById("hint-box").textContent="";
+}
+
+/* ── HINT ── */
+function showHint(){
+  if(solved)return;
+  hintUsedThisRound=true; hintsUsed++;
+  document.getElementById("hint-btn").disabled=true;
+  const firstWord=MISSIONS[current].answer.split(" ")[0];
+  const pairs=firstWord.split("").map(c=>`${ALPHA[c]} = ${c}`).join("   |   ");
+  const box=document.getElementById("hint-box");
+  box.textContent="First word decoded: "+pairs;
+  box.style.display="block";
+}
+
+/* ── CHECK ── */
+function checkAnswer(){
+  if(solved)return;
+  const m=MISSIONS[current];
+  const input=document.getElementById("answer-input").value.trim().toUpperCase();
+  const fb=document.getElementById("feedback");
+  const inp=document.getElementById("answer-input");
+  if(!input){fb.textContent="⚠ Type your answer first!";fb.className="feedback-msg fail";return;}
+
+  if(input===m.answer){
+    solved=true;
+    const pts=hintUsedThisRound?Math.round(m.points*.6):m.points;
+    score+=pts; correctCount++;
+    document.getElementById("hdr-score").textContent=score;
+    inp.className="answer-input correct";
+    fb.className="feedback-msg ok";
+    fb.textContent=hintUsedThisRound?`✅ Correct! +${pts} pts (hint applied)`:`✅ Excellent! +${pts} pts`;
+    document.getElementById("check-btn").disabled=true;
+    inp.disabled=true;
+    const nb=document.getElementById("next-btn");
+    nb.style.display="block";
+    nb.textContent=current<MISSIONS.length-1?"NEXT MISSION →":"SEE FINAL RESULTS →";
+    highlightBytes();
+  } else {
+    inp.className="answer-input wrong";
+    fb.className="feedback-msg fail";
+    fb.textContent=levenshtein(input,m.answer)<=2?"❌ So close! Check each byte carefully.":"❌ Not quite — keep trying!";
+    setTimeout(()=>{inp.className="answer-input";},600);
+  }
+}
+
+function highlightBytes(){
+  const bytes=document.querySelectorAll(".code-byte");
+  bytes.forEach((b,i)=>setTimeout(()=>b.classList.add("highlight"),i*50));
+}
+
+/* ── NEXT ── */
+function nextMission(){
+  if(current<MISSIONS.length-1) loadMission(current+1);
+  else showEnd();
+}
+
+/* ── END ── */
+function showEnd(){
+  document.getElementById("game").style.display="none";
+  const end=document.getElementById("endscreen");
+  end.style.display="block";
+  document.getElementById("end-score").textContent=score;
+  document.getElementById("stat-correct").textContent=correctCount;
+  document.getElementById("stat-hints").textContent=hintsUsed;
+  const maxPts=MISSIONS.reduce((a,m)=>a+m.points,0);
+  document.getElementById("stat-max").textContent=maxPts;
+  document.getElementById("progress-fill").style.width="100%";
+  document.getElementById("hdr-mission").textContent="8";
+  const pct=score/maxPts;
+  let stars="⭐",rank="🔎 Junior Agent — Keep training!";
+  if(pct>=.92){stars="⭐⭐⭐";rank="👑 Master Code Breaker!";}
+  else if(pct>=.72){stars="⭐⭐";rank="🔒 Senior Decoder — Great work!";}
+  document.getElementById("end-stars").textContent=stars;
+  document.getElementById("end-rank").textContent=rank;
+}
+
+/* ── RESTART ── */
+function restartGame(){
+  score=0;current=0;hintsUsed=0;correctCount=0;
+  document.getElementById("hdr-score").textContent=0;
+  document.getElementById("endscreen").style.display="none";
+  document.getElementById("game").style.display="block";
+  loadMission(0);
+}
+
+function toggleRef(){
+  const p=document.getElementById("ref-panel");
+  p.style.display=p.style.display==="block"?"none":"block";
+}
+
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i||j));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+buildRefGrid("intro-ref");
+</script>
+</body>
+</html>
